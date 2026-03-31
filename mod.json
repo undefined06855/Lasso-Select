@@ -1,0 +1,20 @@
+{
+    "geode": "5.4.1",
+    "gd": {
+        "win": "2.2081",
+        "android": "2.2081",
+        "mac": "2.2081",
+        "ios": "2.2081"
+    },
+
+    "version": "v1.0.0",
+    "id": "undefined0.lasso-select",
+    "name": "Lasso Select",
+    "developer": "undefined0",
+    "description": "lasso select 2",
+    "tags": [],
+
+    "links": {
+        "source": "https://github.com/undefined06855/example-mod"
+    }
+}
