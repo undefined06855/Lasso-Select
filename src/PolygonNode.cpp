@@ -45,20 +45,20 @@ void PolygonNode::draw() {
 
     m_pShaderProgram->setUniformLocationWith1i(isOutline, 1);
     glBindBuffer(GL_ARRAY_BUFFER, m_outlineVertexBuffer);
-    glVertexAttribPointer(cocos2d::kCCVertexAttrib_Position, 2, GL_DOUBLE, GL_FALSE, 0, (void*)(0));
+    glVertexAttribPointer(cocos2d::kCCVertexAttrib_Position, 2, GL_FLOAT, GL_FALSE, 0, (void*)(0));
     glDrawArrays(GL_TRIANGLES, 0, m_outlineVertexBufferCount);
 
     m_pShaderProgram->setUniformLocationWith1i(isOutline, 0);
     glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
-    glVertexAttribPointer(cocos2d::kCCVertexAttrib_Position, 2, GL_DOUBLE, GL_FALSE, 0, (void*)(0));
+    glVertexAttribPointer(cocos2d::kCCVertexAttrib_Position, 2, GL_FLOAT, GL_FALSE, 0, (void*)(0));
     glDrawArrays(GL_TRIANGLES, 0, m_vertexBufferCount);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     // *getNumberOfDraws() += 1;
 }
 
-std::vector<double> PolygonNode::flattenPathsD(const Clipper2Lib::PathsD& paths) {
-    std::vector<double> solution;
+std::vector<float> PolygonNode::flattenPathsD(const Clipper2Lib::PathsD& paths) {
+    std::vector<float> solution;
     solution.reserve(paths.size() * 6);
     for (auto& tri : paths) {
         solution.push_back(tri[0].x);
@@ -78,20 +78,24 @@ void PolygonNode::updateVertices(const std::vector<cocos2d::CCPoint>& points) {
     for (auto& point : points) { path.push_back({ point.x, point.y }); }
 
     Clipper2Lib::PathsD source = { path };
-    Clipper2Lib::Triangulate(Clipper2Lib::Union(source, Clipper2Lib::FillRule::NonZero), /* decimal places */ 3, m_tris);
+    auto cleaned = Clipper2Lib::Union(source, Clipper2Lib::FillRule::EvenOdd);
+    Clipper2Lib::Triangulate(cleaned, /* decimal places */ 2, m_tris); // TODO: sometimes this just hangs? maybe run in thread...
 
     // flatten PathsD into double vector then put into vertex buffer
     auto vertexCoords = this->flattenPathsD(m_tris);
     m_vertexBufferCount = vertexCoords.size() / 2;
     glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, vertexCoords.size() * sizeof(double), vertexCoords.data(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertexCoords.size() * sizeof(float), vertexCoords.data(), GL_DYNAMIC_DRAW);
 
-    // there are 34 bugs to do with this path inflation code. google inflation r34
-    auto inflated = Clipper2Lib::InflatePaths(m_tris, 10.0, Clipper2Lib::JoinType::Round, Clipper2Lib::EndType::Round);
+    // there are 34 bugs to do with this path inflation code. google inflation r34 for more info
+    auto inflated = Clipper2Lib::InflatePaths(cleaned, 0.5, Clipper2Lib::JoinType::Round, Clipper2Lib::EndType::Round);
+    Clipper2Lib::Triangulate(inflated, 2, inflated);
     auto outlineCoords = this->flattenPathsD(inflated);
     m_outlineVertexBufferCount = outlineCoords.size() / 2;
     glBindBuffer(GL_ARRAY_BUFFER, m_outlineVertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, outlineCoords.size() * sizeof(double), outlineCoords.data(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, outlineCoords.size() * sizeof(float), outlineCoords.data(), GL_DYNAMIC_DRAW);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 bool PolygonNode::intersectsNode(cocos2d::CCNode* node) {

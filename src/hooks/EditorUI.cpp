@@ -4,6 +4,9 @@ HookedEditorUI::Fields::Fields()
     : m_swiping(false)
     , m_points() {}
 
+    // TODO: shift to use normal selection
+    // TODO: (and) mobile ui
+
 bool HookedEditorUI::init(LevelEditorLayer* editor) {
     if (!EditorUI::init(editor)) return false;
 
@@ -19,6 +22,8 @@ bool HookedEditorUI::init(LevelEditorLayer* editor) {
 bool HookedEditorUI::ccTouchBegan(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) {
     if (!EditorUI::ccTouchBegan(touch, event)) return false;
     m_fields->m_mousePos = touch->getLocation();
+
+    // TODO: the object you're hovering over seems to get selected?
 
     if (m_swipeActive) {
         this->swipeBegin();
@@ -98,6 +103,9 @@ void HookedEditorUI::swipeEnd() {
     }
 
     this->selectObjects(objects, false);
+    this->updateEditMenu();
+    this->updateButtons();
+    this->updateObjectInfoLabel();
 
     fields->m_points.clear();
     fields->m_swipe->updateVertices(fields->m_points);

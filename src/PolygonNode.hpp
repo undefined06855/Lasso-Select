@@ -16,7 +16,7 @@ public:
 
     void draw() override;
 
-    std::vector<double> flattenPathsD(const Clipper2Lib::PathsD& paths);
+    std::vector<float> flattenPathsD(const Clipper2Lib::PathsD& paths);
     void updateVertices(const std::vector<cocos2d::CCPoint>& points);
     bool intersectsNode(cocos2d::CCNode* node);
 };

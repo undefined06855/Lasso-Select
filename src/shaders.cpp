@@ -17,9 +17,9 @@ uniform bool u_isOutline;
 
 void main() {
     if (u_isOutline) {
-        gl_FragColor = vec4(0.03, 0.51, 0.00, 0.8);
+        gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
     } else {
-        gl_FragColor = vec4(0.17, 0.77, 0.28, 0.4);
+        gl_FragColor = vec4(0.17, 0.77, 0.28, 0.7);
     }
 }
 )";
@@ -38,7 +38,7 @@ $on_game(TexturesLoaded) {
     program->link();
     program->updateUniforms();
 
-    geode::log::info("cowboy");
+    geode::log::info("cowboy time");
 
     cocos2d::CCShaderCache::sharedShaderCache()->addProgram(program, "lasso_shader"_spr);
 }
