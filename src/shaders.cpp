@@ -38,7 +38,7 @@ $on_game(TexturesLoaded) {
     program->link();
     program->updateUniforms();
 
-    geode::log::info("cowboy time");
+    geode::log::info("heyyyyy hi hi hi it's the mod im doing the lasso yeah hi");
 
     cocos2d::CCShaderCache::sharedShaderCache()->addProgram(program, "lasso_shader"_spr);
 }

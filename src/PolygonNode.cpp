@@ -77,7 +77,7 @@ void PolygonNode::updateVertices(const std::vector<cocos2d::CCPoint>& points) {
 
     Clipper2Lib::PathsD source = { path };
     auto cleaned = Clipper2Lib::Union(source, Clipper2Lib::FillRule::EvenOdd);
-    Clipper2Lib::Triangulate(cleaned, /* decimal places */ 2, m_tris); // TODO: sometimes this just hangs? maybe run in thread...
+    Clipper2Lib::Triangulate(cleaned, /* decimal places */ 2, m_tris, false); // useDelauney=false used because delauney sometimes hangs with complex shapes
 
     // flatten PathsD into double vector then put into vertex buffer
     auto vertexCoords = this->flattenPathsD(m_tris);
