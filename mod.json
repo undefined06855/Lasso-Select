@@ -16,5 +16,13 @@
 
     "links": {
         "source": "https://github.com/undefined06855/example-mod"
+    },
+
+    "resources": {
+        "sprites": [ "resources/*.png" ]
+    },
+
+    "dependencies": {
+        "geode.node-ids": "v1.23.3"
     }
 }

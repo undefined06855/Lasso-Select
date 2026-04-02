@@ -2,34 +2,109 @@
 
 HookedEditorUI::Fields::Fields()
     : m_swiping(false)
-    , m_points() {}
+    , m_points()
+    , m_mousePos(cocos2d::CCPoint{ 0.f, 0.f })
+    , m_swipe(nullptr)
 
-    // TODO: shift to use normal selection
-    // TODO: (and) mobile ui
+    , m_useLasso(geode::Mod::get()->getSavedValue<bool>("use-lasso", true))
+    , m_alt(nullptr) {}
+
+void HookedEditorUI::onModify(auto self) {
+    (void)self.setHookPriorityPost("EditorUI::init", geode::Priority::Late);
+}
 
 bool HookedEditorUI::init(LevelEditorLayer* editor) {
     if (!EditorUI::init(editor)) return false;
+
+    auto fields = m_fields.self();
+
+    auto onSprite = geode::BasedButtonSprite::create(
+        cocos2d::CCSprite::create("lasso.png"_spr),
+        geode::BaseType::Editor,
+        (int)geode::EditorBaseSize::Normal,
+        (int)geode::EditorBaseColor::Cyan
+    );
+    onSprite->setScale(.75f);
+
+    fields->m_alt = cocos2d::CCSprite::create("alt.png"_spr);
+    fields->m_alt->setScale(.6f);
+    fields->m_alt->setPosition({ 22.f, 9.f });
+    fields->m_alt->setVisible(false);
+    onSprite->addChild(fields->m_alt);
+
+    auto offSprite = geode::BasedButtonSprite::create(
+        cocos2d::CCSprite::create("lasso.png"_spr),
+        geode::BaseType::Editor,
+        (int)geode::EditorBaseSize::Normal,
+        (int)geode::EditorBaseColor::Green
+    );
+    offSprite->setScale(.75f);
+
+    auto toggler = geode::cocos::CCMenuItemExt::createToggler(
+        onSprite, offSprite,
+        [this](CCMenuItemToggler* toggler) {
+            bool isLasso = !toggler->isOn(); // it's inverted because the callback gets called at a weird time
+            m_fields->m_useLasso = isLasso;
+            geode::Mod::get()->setSavedValue<bool>("use-lasso", isLasso);
+        }
+    );
+
+    toggler->toggle(fields->m_useLasso);
+
+    auto pad = cocos2d::CCMenu::create();
+    pad->setID("pad"_spr);
+    pad->setContentSize({ 40.f, 40.f });
+    pad->addChildAtPosition(toggler, geode::Anchor::Center, { 0.f, -2.f });
+
+    auto buttonsMenu = this->getChildByID("editor-buttons-menu");
+    if (!buttonsMenu) return true;
+
+    buttonsMenu->addChild(pad);
+    buttonsMenu->updateLayout();
 
     auto node = PolygonNode::create();
     node->setID("PolygonNode"_spr);
     this->addChild(node);
 
-    m_fields->m_swipe = node;
+    fields->m_swipe = node;
+
+    this->addEventListener(geode::KeyboardInputEvent(), [this, toggler](geode::KeyboardInputData data) {
+        if (data.key != cocos2d::enumKeyCodes::KEY_LeftMenu) return geode::ListenerResult::Propagate;
+
+        auto fields = m_fields.self();
+
+        // alt pressed
+        if (data.action == geode::KeyboardInputData::Action::Press && !fields->m_useLasso) {
+            fields->m_useLasso = true;
+            fields->m_alt->setVisible(true);
+            toggler->toggle(true);
+            return geode::ListenerResult::Stop;
+        }
+
+        // alt released
+        if (data.action == geode::KeyboardInputData::Action::Release && fields->m_alt->isVisible()) {
+            fields->m_alt->setVisible(false);
+            fields->m_useLasso = false;
+            toggler->toggle(false);
+            return geode::ListenerResult::Stop;
+        }
+
+        return geode::ListenerResult::Propagate;
+    });
 
     return true;
 }
 
 bool HookedEditorUI::ccTouchBegan(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) {
     if (!EditorUI::ccTouchBegan(touch, event)) return false;
-    m_fields->m_mousePos = touch->getLocation();
+    auto fields = m_fields.self();
+    fields->m_mousePos = touch->getLocation();
 
-    // TODO: the object you're hovering over seems to get selected?
-
-    if (m_swipeActive) {
+    // m_snapObjectExists just is whether you're free moving or not?
+    if (m_swipeActive && !m_snapObjectExists && fields->m_useLasso) {
+        m_swipeActive = false; // always stop gd swiping
         this->swipeBegin();
     }
-
-    m_swipeActive = false; // always stop gd swiping
 
     return true;
 }
@@ -38,12 +113,10 @@ bool HookedEditorUI::ccTouchBegan(cocos2d::CCTouch* touch, cocos2d::CCEvent* eve
 void HookedEditorUI::triggerSwipeMode() {
     EditorUI::triggerSwipeMode();
 
-    if (m_swipeActive) {
+    if (m_swipeActive && !m_snapObjectExists && m_fields->m_useLasso) {
+        m_swipeActive = false;
         this->swipeBegin();
     }
-
-    m_swipeActive = false;
-    m_swipeModeTriggered = false;
 }
 
 void HookedEditorUI::ccTouchMoved(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) {

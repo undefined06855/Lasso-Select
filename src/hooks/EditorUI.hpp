@@ -10,7 +10,12 @@ class $modify(HookedEditorUI, EditorUI) {
         std::vector<cocos2d::CCPoint> m_points;
         cocos2d::CCPoint m_mousePos;
         PolygonNode* m_swipe;
+
+        bool m_useLasso;
+        cocos2d::CCSprite* m_alt;
     };
+
+    static void onModify(auto self);
 
     bool init(LevelEditorLayer* editor);
 

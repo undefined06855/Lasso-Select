@@ -41,8 +41,6 @@ void PolygonNode::draw() {
 
     int isOutline = m_pShaderProgram->getUniformLocationForName("u_isOutline");
 
-    // TODO: GL_DOUBLE is great and all but will it work on ios :broken_heart:
-
     m_pShaderProgram->setUniformLocationWith1i(isOutline, 1);
     glBindBuffer(GL_ARRAY_BUFFER, m_outlineVertexBuffer);
     glVertexAttribPointer(cocos2d::kCCVertexAttrib_Position, 2, GL_FLOAT, GL_FALSE, 0, (void*)(0));
@@ -88,6 +86,8 @@ void PolygonNode::updateVertices(const std::vector<cocos2d::CCPoint>& points) {
     glBufferData(GL_ARRAY_BUFFER, vertexCoords.size() * sizeof(float), vertexCoords.data(), GL_DYNAMIC_DRAW);
 
     // there are 34 bugs to do with this path inflation code. google inflation r34 for more info
+    // creating actual geometry for the outline isnt a great solution this seems like such a "game engine" solution but
+    // i cant really think of any other simple ways to do this
     auto inflated = Clipper2Lib::InflatePaths(cleaned, 0.5, Clipper2Lib::JoinType::Round, Clipper2Lib::EndType::Round);
     Clipper2Lib::Triangulate(inflated, 2, inflated);
     auto outlineCoords = this->flattenPathsD(inflated);
