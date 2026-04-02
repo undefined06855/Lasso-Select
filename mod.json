@@ -11,11 +11,11 @@
     "id": "undefined0.lasso-select",
     "name": "Lasso Select",
     "developer": "undefined0",
-    "description": "lasso select 2",
-    "tags": [],
+    "description": "Togglable lasso selection for the editor!",
+    "tags": [ "editor", "enhancement" ],
 
     "links": {
-        "source": "https://github.com/undefined06855/example-mod"
+        "source": "https://github.com/undefined06855/Lasso-Select"
     },
 
     "resources": {
