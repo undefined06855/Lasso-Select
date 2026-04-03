@@ -48,11 +48,12 @@ bool HookedEditorUI::init(LevelEditorLayer* editor) {
             geode::Mod::get()->setSavedValue<bool>("use-lasso", isLasso);
         }
     );
+    toggler->setID("lasso-button-toggler"_spr);
 
     toggler->toggle(fields->m_useLasso);
 
     auto pad = cocos2d::CCMenu::create();
-    pad->setID("pad"_spr);
+    pad->setID("lasso-button-menu"_spr);
     pad->setContentSize({ 40.f, 40.f });
     pad->addChildAtPosition(toggler, geode::Anchor::Center, { 0.f, -2.f });
 
@@ -61,6 +62,8 @@ bool HookedEditorUI::init(LevelEditorLayer* editor) {
 
     buttonsMenu->addChild(pad);
     buttonsMenu->updateLayout();
+
+    m_uiItems->addObject(pad);
 
     auto node = PolygonNode::create();
     node->setID("PolygonNode"_spr);
