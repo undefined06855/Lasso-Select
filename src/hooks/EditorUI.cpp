@@ -195,6 +195,12 @@ void HookedEditorUI::addSwipePoint() {
         return;
     }
 
+    if (std::find(fields->m_points.begin(), fields->m_points.end(), fields->m_mousePos) != fields->m_points.end()) {
+        // point already exists, this can break triangulation
+        geode::log::warn("duplicate point at {}", fields->m_mousePos);
+        return;
+    }
+
     fields->m_points.push_back(fields->m_mousePos);
     fields->m_swipe->updateVertices(fields->m_points);
 }
