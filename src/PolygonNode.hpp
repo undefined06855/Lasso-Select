@@ -18,6 +18,6 @@ public:
 
     std::vector<float> flattenPathsD(const Clipper2Lib::PathsD& paths);
     void updateVertices(const std::vector<cocos2d::CCPoint>& points);
-    bool intersectsNode(cocos2d::CCNode* node);
-    cocos2d::CCPoint rotatePoint(cocos2d::CCPoint point);
+    bool intersectsNode(cocos2d::CCNode* node, float angle);
+    cocos2d::CCPoint rotatePoint(cocos2d::CCPoint point, float angle);
 };

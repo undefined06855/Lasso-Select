@@ -99,15 +99,15 @@ void PolygonNode::updateVertices(const std::vector<cocos2d::CCPoint>& points) {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-bool PolygonNode::intersectsNode(cocos2d::CCNode* node) {
+bool PolygonNode::intersectsNode(cocos2d::CCNode* node, float angle) {
     auto bounding = node->boundingBox();
     auto parent = node->getParent();
     if (!parent) return false;
 
-    auto topLeft = rotatePoint(parent->convertToWorldSpace({ bounding.getMinX(), bounding.getMaxY() }));
-    auto topRight = rotatePoint(parent->convertToWorldSpace({ bounding.getMaxX(), bounding.getMaxY() }));
-    auto bottomLeft = rotatePoint(parent->convertToWorldSpace({ bounding.getMinX(), bounding.getMinY() }));
-    auto bottomRight = rotatePoint(parent->convertToWorldSpace({ bounding.getMaxX(), bounding.getMinY() }));
+    auto topLeft = rotatePoint(parent->convertToWorldSpace({ bounding.getMinX(), bounding.getMaxY() }), angle);
+    auto topRight = rotatePoint(parent->convertToWorldSpace({ bounding.getMaxX(), bounding.getMaxY() }), angle);
+    auto bottomLeft = rotatePoint(parent->convertToWorldSpace({ bounding.getMinX(), bounding.getMinY() }), angle);
+    auto bottomRight = rotatePoint(parent->convertToWorldSpace({ bounding.getMaxX(), bounding.getMinY() }), angle);
 
     // TODO: add initial aabb test? this is already so fast anyway....
 
@@ -124,16 +124,16 @@ bool PolygonNode::intersectsNode(cocos2d::CCNode* node) {
     return false;
 }
 
-cocos2d::CCPoint PolygonNode::rotatePoint(cocos2d::CCPoint point) {
+cocos2d::CCPoint PolygonNode::rotatePoint(cocos2d::CCPoint point, float angle) {
     auto winSize = cocos2d::CCDirector::get()->getWinSize();
 
-    float angleRadians = CC_DEGREES_TO_RADIANS(-LevelEditorLayer::get()->m_gameState.m_cameraAngle);
+    float angleRadians = CC_DEGREES_TO_RADIANS(angle);
 
     float sinA = std::sinf(angleRadians);
     float cosA = std::cosf(angleRadians);
 
-    point.x -= winSize.width / 2;
-    point.y -= winSize.height / 2;
+    point.x -= (winSize.width / 2);
+    point.y -= (winSize.height / 2);
 
     float xNew = point.x * cosA - point.y * sinA;
     float yNew = point.x * sinA + point.y * cosA;
