@@ -28,4 +28,5 @@ class $modify(HookedEditorUI, EditorUI) {
     void swipeContinue();
     void swipeEnd();
     void addSwipePoint();
+    void useLasso(bool state);
 };
