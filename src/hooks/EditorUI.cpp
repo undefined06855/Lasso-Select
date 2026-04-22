@@ -51,7 +51,7 @@ bool HookedEditorUI::init(LevelEditorLayer* editor) {
     toggler->setID("lasso-button-toggler"_spr);
 
     toggler->toggle(fields->m_useLasso);
-    setUserFlag("lasso-active"_spr, m_fields->m_useLasso);
+    setUserFlag("lasso-active"_spr, fields->m_useLasso);
 
     auto pad = cocos2d::CCMenu::create();
     pad->setID("lasso-button-menu"_spr);

@@ -1,6 +1,5 @@
 #include "PolygonNode.hpp"
 #include "intersect.hpp"
-#include <Geode/binding/LevelEditorLayer.hpp>
 
 PolygonNode::~PolygonNode() {
     glDeleteBuffers(1, &m_vertexBuffer);
@@ -132,11 +131,10 @@ cocos2d::CCPoint PolygonNode::rotatePoint(cocos2d::CCPoint point, float angle) {
     float sinA = std::sinf(angleRadians);
     float cosA = std::cosf(angleRadians);
 
-    point.x -= (winSize.width / 2);
-    point.y -= (winSize.height / 2);
+    point -= winSize / 2.f;
 
     float xNew = point.x * cosA - point.y * sinA;
     float yNew = point.x * sinA + point.y * cosA;
 
-    return {xNew + winSize.width / 2, yNew + winSize.height / 2};
+    return cocos2d::CCPoint{ xNew, yNew } + winSize / 2.f;
 }
