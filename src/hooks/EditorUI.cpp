@@ -44,13 +44,14 @@ bool HookedEditorUI::init(LevelEditorLayer* editor) {
         onSprite, offSprite,
         [this](CCMenuItemToggler* toggler) {
             bool isLasso = !toggler->isOn(); // it's inverted because the callback gets called at a weird time
-            m_fields->m_useLasso = isLasso;
+            useLasso(isLasso);
             geode::Mod::get()->setSavedValue<bool>("use-lasso", isLasso);
         }
     );
     toggler->setID("lasso-button-toggler"_spr);
 
     toggler->toggle(fields->m_useLasso);
+    setUserFlag("lasso-active"_spr, m_fields->m_useLasso);
 
     auto pad = cocos2d::CCMenu::create();
     pad->setID("lasso-button-menu"_spr);
@@ -78,7 +79,7 @@ bool HookedEditorUI::init(LevelEditorLayer* editor) {
 
         // alt pressed
         if (data.action == geode::KeyboardInputData::Action::Press && !fields->m_useLasso) {
-            fields->m_useLasso = true;
+            useLasso(true);
             fields->m_alt->setVisible(true);
             toggler->toggle(true);
             return geode::ListenerResult::Stop;
@@ -87,7 +88,7 @@ bool HookedEditorUI::init(LevelEditorLayer* editor) {
         // alt released
         if (data.action == geode::KeyboardInputData::Action::Release && fields->m_alt->isVisible()) {
             fields->m_alt->setVisible(false);
-            fields->m_useLasso = false;
+            useLasso(false);
             toggler->toggle(false);
             return geode::ListenerResult::Stop;
         }
@@ -96,6 +97,11 @@ bool HookedEditorUI::init(LevelEditorLayer* editor) {
     });
 
     return true;
+}
+
+void HookedEditorUI::useLasso(bool state) {
+    m_fields->m_useLasso = state;
+    setUserFlag("lasso-active"_spr, state);
 }
 
 bool HookedEditorUI::ccTouchBegan(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) {
@@ -173,7 +179,7 @@ void HookedEditorUI::swipeEnd() {
     auto objects = cocos2d::CCArray::create();
     for (int i = 0; i < m_editorLayer->m_activeObjectsCount; i++) {
         auto obj = m_editorLayer->m_activeObjects[i];
-        if (fields->m_swipe->intersectsNode(obj)) {
+        if (fields->m_swipe->intersectsNode(obj, -m_editorLayer->m_gameState.m_cameraAngle)) {
             objects->addObject(obj);
         }
     }
