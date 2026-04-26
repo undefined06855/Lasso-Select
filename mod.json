@@ -24,5 +24,20 @@
 
     "dependencies": {
         "geode.node-ids": "v1.23.3"
+    },
+
+    "settings": {
+        "enable-alt": {
+            "type": "bool",
+            "name": "Alt to Enable",
+            "description": "Allows you to press Alt (Option on MacOS and iOS) to enable lasso selection without pressing the button.",
+            "default": true
+        },
+        "copilot-key": {
+            "type": "bool",
+            "name": "Joke Alt Icon",
+            "description": "Uses the Copilot icon instead of Alt (Option on MacOS and iOS) for the modifier key. Does not change actual functionality.",
+            "default": false
+        }
     }
 }

@@ -26,11 +26,22 @@ bool HookedEditorUI::init(LevelEditorLayer* editor) {
     );
     onSprite->setScale(.75f);
 
-    fields->m_alt = cocos2d::CCSprite::create("alt.png"_spr);
+    const char* altPath;
+    if (geode::Mod::get()->getSettingValue<bool>("copilot-key")) {
+        altPath = "alt-copilot.png"_spr;
+    } else {
+#ifdef GEODE_IS_APPLE
+        altPath = "alt-mac.png"_spr;
+#else
+        altPath = "alt.png"_spr;
+#endif
+    }
+
+    fields->m_alt = cocos2d::CCSprite::create(altPath);
     fields->m_alt->setScale(.6f);
-    fields->m_alt->setPosition({ 22.f, 9.f });
+    fields->m_alt->setAnchorPoint({ 1.f, 0.f });
     fields->m_alt->setVisible(false);
-    onSprite->addChild(fields->m_alt);
+    onSprite->addChildAtPosition(fields->m_alt, geode::Anchor::BottomRight, { -2.f, 3.f });
 
     auto offSprite = geode::BasedButtonSprite::create(
         cocos2d::CCSprite::create("lasso.png"_spr),
@@ -72,29 +83,31 @@ bool HookedEditorUI::init(LevelEditorLayer* editor) {
 
     fields->m_swipe = node;
 
-    this->addEventListener(geode::KeyboardInputEvent(), [this, toggler](geode::KeyboardInputData data) {
-        if (data.key != cocos2d::enumKeyCodes::KEY_LeftMenu) return geode::ListenerResult::Propagate;
+    if (geode::Mod::get()->getSettingValue<bool>("enable-alt")) {
+        this->addEventListener(geode::KeyboardInputEvent(), [this, toggler](geode::KeyboardInputData data) {
+            if (data.key != cocos2d::enumKeyCodes::KEY_LeftMenu) return geode::ListenerResult::Propagate;
 
-        auto fields = m_fields.self();
+            auto fields = m_fields.self();
 
-        // alt pressed
-        if (data.action == geode::KeyboardInputData::Action::Press && !fields->m_useLasso) {
-            useLasso(true);
-            fields->m_alt->setVisible(true);
-            toggler->toggle(true);
-            return geode::ListenerResult::Stop;
-        }
+            // alt pressed
+            if (data.action == geode::KeyboardInputData::Action::Press && !fields->m_useLasso) {
+                useLasso(true);
+                fields->m_alt->setVisible(true);
+                toggler->toggle(true);
+                return geode::ListenerResult::Stop;
+            }
 
-        // alt released
-        if (data.action == geode::KeyboardInputData::Action::Release && fields->m_alt->isVisible()) {
-            fields->m_alt->setVisible(false);
-            useLasso(false);
-            toggler->toggle(false);
-            return geode::ListenerResult::Stop;
-        }
+            // alt released
+            if (data.action == geode::KeyboardInputData::Action::Release && fields->m_alt->isVisible()) {
+                fields->m_alt->setVisible(false);
+                useLasso(false);
+                toggler->toggle(false);
+                return geode::ListenerResult::Stop;
+            }
 
-        return geode::ListenerResult::Propagate;
-    });
+            return geode::ListenerResult::Propagate;
+        });
+    }
 
     return true;
 }
