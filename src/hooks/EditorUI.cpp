@@ -55,7 +55,7 @@ bool HookedEditorUI::init(LevelEditorLayer* editor) {
         onSprite, offSprite,
         [this](CCMenuItemToggler* toggler) {
             bool isLasso = !toggler->isOn(); // it's inverted because the callback gets called at a weird time
-            useLasso(isLasso);
+            this->useLasso(isLasso);
             geode::Mod::get()->setSavedValue<bool>("use-lasso", isLasso);
         }
     );
@@ -91,8 +91,8 @@ bool HookedEditorUI::init(LevelEditorLayer* editor) {
 
             // alt pressed
             if (data.action == geode::KeyboardInputData::Action::Press && !fields->m_useLasso) {
-                useLasso(true);
                 fields->m_alt->setVisible(true);
+                this->useLasso(true);
                 toggler->toggle(true);
                 return geode::ListenerResult::Stop;
             }
@@ -100,7 +100,7 @@ bool HookedEditorUI::init(LevelEditorLayer* editor) {
             // alt released
             if (data.action == geode::KeyboardInputData::Action::Release && fields->m_alt->isVisible()) {
                 fields->m_alt->setVisible(false);
-                useLasso(false);
+                this->useLasso(false);
                 toggler->toggle(false);
                 return geode::ListenerResult::Stop;
             }
@@ -114,7 +114,7 @@ bool HookedEditorUI::init(LevelEditorLayer* editor) {
 
 void HookedEditorUI::useLasso(bool state) {
     m_fields->m_useLasso = state;
-    setUserFlag("lasso-active"_spr, state);
+    this->setUserFlag("lasso-active"_spr, state);
 }
 
 bool HookedEditorUI::ccTouchBegan(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) {
