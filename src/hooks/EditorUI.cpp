@@ -94,7 +94,7 @@ bool HookedEditorUI::init(LevelEditorLayer* editor) {
                 fields->m_alt->setVisible(true);
                 this->useLasso(true);
                 toggler->toggle(true);
-                return geode::ListenerResult::Stop;
+                return geode::ListenerResult::Propagate;
             }
 
             // alt released
@@ -102,7 +102,7 @@ bool HookedEditorUI::init(LevelEditorLayer* editor) {
                 fields->m_alt->setVisible(false);
                 this->useLasso(false);
                 toggler->toggle(false);
-                return geode::ListenerResult::Stop;
+                return geode::ListenerResult::Propagate;
             }
 
             return geode::ListenerResult::Propagate;
@@ -123,7 +123,9 @@ bool HookedEditorUI::ccTouchBegan(cocos2d::CCTouch* touch, cocos2d::CCEvent* eve
     fields->m_mousePos = touch->getLocation();
 
     // m_snapObjectExists just is whether you're free moving or not?
-    if (m_swipeActive && !m_snapObjectExists && fields->m_useLasso) {
+    // m_noSnapUndo is alt drag to copy (i assume the member is used for other stuff but a side effect is that it gets
+    // set to true after this->onDuplicate gets called)
+    if (m_swipeActive && !m_snapObjectExists && !m_noSnapUndo && fields->m_useLasso) {
         m_swipeActive = false; // always stop gd swiping
         this->swipeBegin();
     }

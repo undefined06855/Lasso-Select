@@ -1,4 +1,7 @@
 # Lasso Select
+## v1.0.5
+- Fix alt+drag to duplicate objects not working if Alt to Enable was enabled
+
 ## v1.0.4
 - Add a setting to disable the Alt key
 - Add a setting to use the Copilot key sprite
