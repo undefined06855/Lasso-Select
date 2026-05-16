@@ -1,4 +1,7 @@
 # Lasso Select
+## v1.0.6
+- Fix objects on other layers being selectable (why did nobody tell me about this earlier??)
+
 ## v1.0.5
 - Fix alt+drag to duplicate objects not working if Alt to Enable was enabled
 

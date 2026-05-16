@@ -194,6 +194,10 @@ void HookedEditorUI::swipeEnd() {
     auto objects = cocos2d::CCArray::create();
     for (int i = 0; i < m_editorLayer->m_activeObjectsCount; i++) {
         auto obj = m_editorLayer->m_activeObjects[i];
+        if (m_editorLayer->m_currentLayer != -1) {
+            if (m_editorLayer->m_currentLayer != obj->m_editorLayer && m_editorLayer->m_currentLayer != obj->m_editorLayer2) continue;
+        }
+
         if (fields->m_swipe->intersectsNode(obj, -m_editorLayer->m_gameState.m_cameraAngle)) {
             objects->addObject(obj);
         }
