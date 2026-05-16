@@ -1,4 +1,7 @@
 # Lasso Select
+## v1.0.7
+- Consider locked layers when seeing if an object on another layer is selectable
+
 ## v1.0.6
 - Fix objects on other layers being selectable (why did nobody tell me about this earlier??)
 
