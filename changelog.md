@@ -1,4 +1,7 @@
 # Lasso Select
+## v1.0.8
+- Fix objects in negative editor layers crashing the game
+
 ## v1.0.7
 - Consider locked layers when seeing if an object on another layer is selectable
 
