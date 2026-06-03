@@ -200,7 +200,7 @@ void HookedEditorUI::swipeEnd() {
         bool isOnCurrentEditorLayer2 = (obj->m_editorLayer2 == m_editorLayer->m_currentLayer) && obj->m_editorLayer2 != 0;
 
         bool locked = false;
-        if (m_editorLayer->m_lockedLayers.size() > std::max(obj->m_editorLayer, obj->m_editorLayer2)) {
+        if (std::max(obj->m_editorLayer, obj->m_editorLayer2) < m_editorLayer->m_lockedLayers.size()) {
             locked |= obj->m_editorLayer >= 0 && m_editorLayer->m_lockedLayers[obj->m_editorLayer];
             locked |= obj->m_editorLayer2 > 0 && m_editorLayer->m_lockedLayers[obj->m_editorLayer2];
         }
