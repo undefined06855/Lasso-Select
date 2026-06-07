@@ -1,4 +1,8 @@
 # Lasso Select
+## v1.0.9
+- Use EditorUI::validGroup to check for editor layers and locked layers instead of a custom implementation
+- Fix clicking in 3 separate places without dragging drawing a broken triangle
+
 ## v1.0.8
 - Fix objects in negative editor layers crashing the game
 
