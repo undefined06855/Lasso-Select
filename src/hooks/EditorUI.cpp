@@ -197,20 +197,6 @@ void HookedEditorUI::swipeEnd() {
     for (int i = 0; i < m_editorLayer->m_activeObjectsCount; i++) {
         auto obj = m_editorLayer->m_activeObjects[i];
 
-        // taken from tinker and rearranged, thank you alpha
-        // bool isOnCurrentEditorLayer1 = obj->m_editorLayer == m_editorLayer->m_currentLayer;
-        // bool isOnCurrentEditorLayer2 = (obj->m_editorLayer2 == m_editorLayer->m_currentLayer) && obj->m_editorLayer2 != 0;
-
-        // bool locked = false;
-        // if (std::max(obj->m_editorLayer, obj->m_editorLayer2) < m_editorLayer->m_lockedLayers.size()) {
-        //     locked |= obj->m_editorLayer >= 0 && m_editorLayer->m_lockedLayers[obj->m_editorLayer];
-        //     locked |= obj->m_editorLayer2 > 0 && m_editorLayer->m_lockedLayers[obj->m_editorLayer2];
-        // }
-
-        // if (locked || (m_editorLayer->m_currentLayer != -1 && (!isOnCurrentEditorLayer1 && !isOnCurrentEditorLayer2))) {
-        //     continue;
-        // }
-
         if (!m_editorLayer->validGroup(obj,/* consider locked layers */ true)) continue;
 
         if (fields->m_swipe->intersectsNode(obj, -m_editorLayer->m_gameState.m_cameraAngle)) {
