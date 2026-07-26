@@ -199,7 +199,7 @@ void HookedEditorUI::swipeEnd() {
 
         if (!m_editorLayer->validGroup(obj,/* consider locked layers */ true)) continue;
 
-        if (fields->m_swipe->intersectsNode(obj, -m_editorLayer->m_gameState.m_cameraAngle)) {
+        if (fields->m_swipe->intersectsObject(m_editorLayer, obj, -m_editorLayer->m_gameState.m_cameraAngle)) {
             objects->addObject(obj);
         }
     }
