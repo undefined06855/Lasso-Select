@@ -104,24 +104,24 @@ bool PolygonNode::intersectsObject(LevelEditorLayer* editor, GameObject* object,
     if (!parent) return false;
 
     cocos2d::CCPoint topLeft, topRight, bottomLeft, bottomRight;
-    geode::Result<ie::SelectionBox> box = ie::SelectionBox::fromObject(editor, object);
+    auto box = ie::SelectionBox::fromObject(editor, object);
 
     if (box.isOk()) {
         // use immersive editor's better select hitboxes, if available
 
         auto corners = box.unwrap().getCorners();
 
-        bottomLeft = rotatePoint(parent->convertToWorldSpace(corners[0]), angle);
-        bottomRight = rotatePoint(parent->convertToWorldSpace(corners[1]), angle);
-        topRight = rotatePoint(parent->convertToWorldSpace(corners[2]), angle);
-        topLeft = rotatePoint(parent->convertToWorldSpace(corners[3]), angle);
+        bottomLeft = this->rotatePoint(parent->convertToWorldSpace(corners[0]), angle);
+        bottomRight = this->rotatePoint(parent->convertToWorldSpace(corners[1]), angle);
+        topRight = this->rotatePoint(parent->convertToWorldSpace(corners[2]), angle);
+        topLeft = this->rotatePoint(parent->convertToWorldSpace(corners[3]), angle);
     } else {
         auto bounding = object->boundingBox();
 
-        topLeft = rotatePoint(parent->convertToWorldSpace({ bounding.getMinX(), bounding.getMaxY() }), angle);
-        topRight = rotatePoint(parent->convertToWorldSpace({ bounding.getMaxX(), bounding.getMaxY() }), angle);
-        bottomLeft = rotatePoint(parent->convertToWorldSpace({ bounding.getMinX(), bounding.getMinY() }), angle);
-        bottomRight = rotatePoint(parent->convertToWorldSpace({ bounding.getMaxX(), bounding.getMinY() }), angle);
+        topLeft = this->rotatePoint(parent->convertToWorldSpace({ bounding.getMinX(), bounding.getMaxY() }), angle);
+        topRight = this->rotatePoint(parent->convertToWorldSpace({ bounding.getMaxX(), bounding.getMaxY() }), angle);
+        bottomLeft = this->rotatePoint(parent->convertToWorldSpace({ bounding.getMinX(), bounding.getMinY() }), angle);
+        bottomRight = this->rotatePoint(parent->convertToWorldSpace({ bounding.getMaxX(), bounding.getMinY() }), angle);
     }
 
     // TODO: add initial aabb test? this is already so fast anyway....
